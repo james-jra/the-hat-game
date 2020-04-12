@@ -2,6 +2,8 @@ __version__ = '0.1.0'
 from config import Config
 from flask import Flask
 from flask_bootstrap import Bootstrap
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import logging
 from logging.handlers import RotatingFileHandler
 import os
@@ -9,11 +11,13 @@ import os
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Link up the other bits of the app
-from hat_game import routes, errors # noqa
-
 # Init extensions
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 bootstrap = Bootstrap(app)
+
+# Link up the other bits of the app
+from hat_game import errors, models, routes # noqa
 
 # Set-up app logger
 if not app.debug:
