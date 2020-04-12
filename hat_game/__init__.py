@@ -1,4 +1,5 @@
 __version__ = '0.1.0'
+from config import Config
 from flask import Flask
 from flask_bootstrap import Bootstrap
 import logging
@@ -6,11 +7,15 @@ from logging.handlers import RotatingFileHandler
 import os
 
 app = Flask(__name__)
+app.config.from_object(Config)
+
+# Link up the other bits of the app
 from hat_game import routes, errors # noqa
 
 # Init extensions
 bootstrap = Bootstrap(app)
 
+# Set-up app logger
 if not app.debug:
     if not os.path.exists('logs'):
         os.mkdir('logs')
