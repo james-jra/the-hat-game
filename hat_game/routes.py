@@ -33,12 +33,17 @@ def get_default_names():
 
 @app.route("/games", methods=["POST"], strict_slashes=False)
 def create_game():
+    json_body = request.json
+    if json_body and json_body["default"]:
+        hat_picks = get_default_names()
+    else:
+        hat_picks = []
+
     for try_n in range(0, 10):
         try:
             game_id = id_generator.get_id()
             game = Game(game_id=game_id)
-            # TODO remove
-            for pick in get_default_names():
+            for pick in hat_picks:
                 game.hat_picks.append(pick)
             db.session.add(game)
             db.session.commit()
