@@ -103,13 +103,19 @@ def join_game(game_id):
     form = GameJoinForm()
     if form.validate_on_submit():
         flash("User {} joined game {}".format(form.username.data, game.game_id))
-        # TODO write user picks into DB.
+        game.hat_picks.extend([
+            HatPick(name=form.names_0.data, submitter=form.username.data),
+            HatPick(name=form.names_1.data, submitter=form.username.data),
+            HatPick(name=form.names_2.data, submitter=form.username.data),
+            HatPick(name=form.names_3.data, submitter=form.username.data),
+        ])
+        db.session.commit()
         return redirect("/game/{}".format(game.game_id))
 
     return render_template(
         "game_join_form.html",
         title="Join {game_id}",
-        game_id=game_id,
+        game_id=game.game_id,
         url_root=request.url_root[:-1],
         form=form,
     )
