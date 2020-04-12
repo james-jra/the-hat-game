@@ -6,6 +6,8 @@ authors = ["James Andrew <james.andrew@metaswitch.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
+flask = "1"
+flask-bootstrap = "^3.3.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

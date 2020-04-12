@@ -1,0 +1,31 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}
+    {% if title %}Hat Game - {{ title }}{% else %}Welcome to The Hat Game{% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/index">The Hat Game</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/index">Home</a></li>
+                        <li><a href="/new">New Game</a></li>
+                        <li><a href="/join">Join</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {# application content needs to be provided in the app_content block #}
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
