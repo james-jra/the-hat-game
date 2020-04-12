@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2>Game {{ game_id }}</h2>
+    <div>
+      <button type="button" class="btn btn-primary btn-lg btn-block" onclick="getNext()">
+        Next
+      </button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="doSkip()">
+        Pass
+      </button>
+    </div>
+{% endblock %}
