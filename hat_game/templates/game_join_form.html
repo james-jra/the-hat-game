@@ -1,19 +1,24 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
     <h2>Joining game {{ game_id }}</h2>
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <label>{{ form.username.label }}</label></br>
-        {{ form.username(size=64) }}
-        <div data-toggle="fieldset" id="names-fieldset">
-          <h3>Names for the Hat</h3>
-          {% for entry in form.names %}
-          <p>
-          {{ entry() }}
-          </p>
-          {% endfor %}
-        </div>
-        <p>{{ form.submit() }}</p>
+    <p>
+    Invite players with the following link:
+    <a href="{{ url_for('join_game', game_id=game_id) }}">
+      {{ url_root }}{{ url_for('join_game', game_id=game_id) }}
+    </a>
+    </p>
+    <form action="" method="post" class="form" role="form">
+      <div class="col-md-4">
+        {{ form.csrf_token() }}
+        {{ wtf.form_field(form.username, class='form-control') }}
+        <h3>Names for the Hat</h3>
+        <p>{{ wtf.form_field(form.names_0, class='form-control') }}</p>
+        <p>{{ wtf.form_field(form.names_1, class='form-control') }}</p>
+        <p>{{ wtf.form_field(form.names_2, class='form-control') }}</p>
+        <p>{{ wtf.form_field(form.names_3, class='form-control') }}</p>
+        <p><input type=submit class='btn btn-primary btn-block', value='submit'></p>
+      </div>
     </form>
 {% endblock %}

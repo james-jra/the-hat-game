@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h2>Game {{ game_id }}</h2>
+    <h2>Play</h2>
+    <p>
+    Invite players with the following link:
+    <a href="{{ url_for('join_game', game_id=game_id) }}">
+      {{ url_root }}{{ url_for('join_game', game_id=game_id) }}
+    </a>
+    </p>
     <div>
       <button type="button" class="btn btn-primary btn-lg btn-block" onclick="getNext()">
         Next
