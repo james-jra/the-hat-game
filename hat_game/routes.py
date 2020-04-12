@@ -70,7 +70,7 @@ def game_page(game_id):
     )
 
 
-@app.route("/game/<string:game_id>/draw", strict_slashes=False)
+@app.route("/game/<string:game_id>/draw", methods=["POST"], strict_slashes=False)
 def draw_name(game_id):
     names = (
         HatPick.query.filter_by(picked=False)
@@ -78,14 +78,13 @@ def draw_name(game_id):
         .filter(Game.game_id == game_id)
         .all()
     )
-    print(names)
     if len(names) == 0:
-        print("empty")
         return jsonify({"empty": True})
 
-    print("not empty")
     drawn = rand.choice(names)
-    print(drawn)
+    drawn.picked = True
+    # Write-back the chosen one
+    db.session.commit()
     return jsonify({"name": drawn.name, "empty": False})
 
 
