@@ -3,6 +3,7 @@ from flask import (
     abort,
     flash,
     jsonify,
+    make_response,
     redirect,
     request,
     render_template,
@@ -55,7 +56,10 @@ def create_game():
     if game_id is None:
         abort(500, description="Game creation failed")
 
-    return redirect(url_for("game_page", game_id=game_id))
+    game_url = url_for("game_page", game_id=game_id)
+    resp = make_response("", 201)
+    resp.headers["Location"] = game_url
+    return resp
 
 
 @app.route("/game/<string:game_id>", strict_slashes=False)
@@ -65,7 +69,7 @@ def game_page(game_id):
         abort(404, description=f"Game {game_id} not found")
 
     if game_id not in session.get("active_games", []):
-        redirect(url_for("join_game", game_id=game_id))
+        return redirect(url_for("join_game", game_id=game_id))
 
     return render_template(
         "game.html",
@@ -75,11 +79,6 @@ def game_page(game_id):
     )
 
 
-@app.route("/games/popup", strict_slashes=False)
-def join_game_popup():
-    return render_template("game_join_popup.html")
-
-
 @app.route("/game/<string:game_id>/join", methods=["POST", "GET"], strict_slashes=False)
 def join_game(game_id):
     game = Game.query.filter_by(game_id=game_id).limit(1).first()
@@ -87,7 +86,7 @@ def join_game(game_id):
         abort(404, description=f"Game {game_id} not found")
 
     if game_id in session.get("active_games", []):
-        redirect(url_for("game_page", game_id=game_id))
+        return redirect(url_for("game_page", game_id=game_id))
 
     form = GameJoinForm()
     if form.validate_on_submit():

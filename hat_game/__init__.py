@@ -4,6 +4,7 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_moment import Moment
 import logging
 from logging.handlers import RotatingFileHandler
 import os
@@ -15,6 +16,7 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 bootstrap = Bootstrap(app)
+moment = Moment(app)
 
 # Link up the other bits of the app
 from hat_game import errors, models, routes  # noqa

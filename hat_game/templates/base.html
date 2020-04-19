@@ -1,43 +1,109 @@
 {% extends "bootstrap/base.html" %}
 
 {% block title %}
-    {% if title %}Hat Game - {{ title }}{% else %}Welcome to The Hat Game{% endif %}
+  {% if title %}Hat Game - {{ title }}{% else %}Welcome to The Hat Game{% endif %}
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-            <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/index">The Hat Game</a>
-                </div>
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav">
-                        <li><a href="/index">Home</a></li>
-                        <li><a href="/new">New Game</a></li>
-                        <li><a href="/join">Join</a></li>
-                    </ul>
-                </div>
-            </div>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/index">The Hat Game</a>
         </div>
-    </nav>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="/index">Home</a></li>
+            <li><a href="#newGameButton" class="newGameButton">New Game</a></li>
+            <li><a href="#joinGameModal" data-toggle="modal" data-target="#joinGameModal">Join</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
+  <div class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-info" role="alert">{{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% endfor %}
+    {% endif %}
+    {% endwith %}
 
-        {# application content needs to be provided in the app_content block #}
-        {% block app_content %}{% endblock %}
+    {# application content needs to be provided in the app_content block #}
+    {% block app_content %}{% endblock %}
+
+    <!-- Join game modal -->
+    <div class="modal fade" id="joinGameModal" tabindex="-1" role="dialog" aria-labelledby="joinGameModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="joinGameModalLabel">Join a Game</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Game ID</span>
+              </div>
+              <input id="game_id" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="joinGameButton">Join</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{super()}}
+  {{ moment.include_moment() }}
+  <script type="text/javascript">
+  $(function() {
+    $('#joinGameButton').click(function() {
+      window.location.replace(
+        "{{ url_for('game_page', game_id='') }}"
+        + document.getElementById("game_id").value
+      )
+    });
+  });
+
+  $(function() {
+    $('.newGameButton').click(function() {
+      createGame().then((data) => {
+        if (data) {
+          window.location.replace(data);
+        } else {
+          console.log("Game create failed");
+        }
+      });
+    });
+  });
+
+  // Create a new game, returning the location response header.
+  async function createGame() {
+    // Default options are marked with *
+    const response = await fetch("{{ url_for('create_game') }}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    });
+    return response.headers.get('location');
+  }
+  </script>
 {% endblock %}

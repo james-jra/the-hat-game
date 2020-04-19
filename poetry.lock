@@ -107,6 +107,17 @@ alembic = ">=0.7"
 
 [[package]]
 category = "main"
+description = "Formatting of dates and times in Flask templates using moment.js."
+name = "flask-moment"
+optional = false
+python-versions = "*"
+version = "0.9.0"
+
+[package.dependencies]
+Flask = "*"
+
+[[package]]
+category = "main"
 description = "Adds SQLAlchemy support to your Flask application."
 name = "flask-sqlalchemy"
 optional = false
@@ -380,7 +391,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "a72bef2ea1d1475eedc621df112db46b53c741d35e09ef4732d88cccaab92626"
+content-hash = "a6360638f65a6aacbddd539e7e27cb2568cc56865c8386bac620e443cef56edf"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -417,6 +428,10 @@ flask-bootstrap = [
 flask-migrate = [
     {file = "Flask-Migrate-2.5.3.tar.gz", hash = "sha256:a69d508c2e09d289f6e55a417b3b8c7bfe70e640f53d2d9deb0d056a384f37ee"},
     {file = "Flask_Migrate-2.5.3-py2.py3-none-any.whl", hash = "sha256:4dc4a5cce8cbbb06b8dc963fd86cf8136bd7d875aabe2d840302ea739b243732"},
+]
+flask-moment = [
+    {file = "Flask-Moment-0.9.0.tar.gz", hash = "sha256:3e8b88f99af7cf75f2f29ef9d8c158eb92ca6f3c1ba6456ad70f715efa6eb7f7"},
+    {file = "Flask_Moment-0.9.0-py2.py3-none-any.whl", hash = "sha256:3c509afa25fd77459c9d799f292dcea384b1cd588ed1fd68f97f6fda6131299e"},
 ]
 flask-sqlalchemy = [
     {file = "Flask-SQLAlchemy-2.4.1.tar.gz", hash = "sha256:6974785d913666587949f7c2946f7001e4fa2cb2d19f4e69ead02e4b8f50b33d"},
