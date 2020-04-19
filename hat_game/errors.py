@@ -1,5 +1,5 @@
 from flask import render_template
-from hat_game import app
+from hat_game import app, db
 
 
 @app.errorhandler(404)
@@ -9,5 +9,5 @@ def not_found_error(error):
 
 @app.errorhandler(500)
 def internal_error(error):
-    # TODO rollback db action
+    db.session.rollback()
     return render_template('500.html'), 500

@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 import logging
 
@@ -22,7 +23,7 @@ def get_db_uri():
     else:
         db_url = db_uri_env_var
 
-    logger.info("Using database {}".format(db_url))
+    logger.info(f"Using database {db_url}")
     return db_url
 
 
@@ -30,3 +31,4 @@ class Config(object):
     SECRET_KEY = get_secret_key()
     SQLALCHEMY_DATABASE_URI = get_db_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    PERMANENT_SESSION_LIFETIME = timedelta(days=31)

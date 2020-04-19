@@ -1,13 +1,13 @@
 from datetime import datetime
 from flask import (
-    render_template,
-    url_for,
-    make_response,
-    redirect,
-    flash,
-    request,
     abort,
+    flash,
     jsonify,
+    redirect,
+    request,
+    render_template,
+    session,
+    url_for,
 )
 from hat_game import app, db, id_generator
 from hat_game.forms import GameJoinForm
@@ -55,22 +55,21 @@ def create_game():
     if game_id is None:
         abort(500, description="Game creation failed")
 
-    game_url = url_for("game_page", game_id=game_id)
-    resp = make_response("", 201)
-    resp.headers["Location"] = game_url
-    return resp
+    return redirect(url_for("game_page", game_id=game_id))
 
 
 @app.route("/game/<string:game_id>", strict_slashes=False)
 def game_page(game_id):
-    # TODO check for user session and redirect if not already playing.
     game = Game.query.filter_by(game_id=game_id).limit(1).first()
     if game is None:
-        abort(404, description="Game {game_id} not found")
+        abort(404, description=f"Game {game_id} not found")
+
+    if game_id not in session.get("active_games", []):
+        redirect(url_for("join_game", game_id=game_id))
 
     return render_template(
         "game.html",
-        title="Game {game_id}",
+        title=f"Game {game_id}",
         game_id=game.game_id,
         url_root=request.url_root[:-1],
     )
@@ -80,9 +79,11 @@ def game_page(game_id):
 def join_game(game_id):
     game = Game.query.filter_by(game_id=game_id).limit(1).first()
     if game is None:
-        abort(404, description="Game {game_id} not found")
+        abort(404, description=f"Game {game_id} not found")
 
-    # TODO check for user session and redirect if already playing.
+    if game_id in session.get("active_games", []):
+        redirect(url_for("game_page", game_id=game_id))
+
     form = GameJoinForm()
     if form.validate_on_submit():
         flash("User {} joined game {}".format(form.username.data, game.game_id))
@@ -95,11 +96,18 @@ def join_game(game_id):
             ]
         )
         db.session.commit()
-        return redirect("/game/{}".format(game.game_id))
+
+        session_games = session.get("active_games", [])
+        session_games.append(game_id)
+        session["active_games"] = session_games
+        session.modified = True
+        session.permanent = True
+
+        return redirect(url_for("game_page", game_id=game_id))
 
     return render_template(
         "game_join_form.html",
-        title="Join {game_id}",
+        title=f"Join {game.game_id}",
         game_id=game.game_id,
         url_root=request.url_root[:-1],
         form=form,
@@ -139,9 +147,14 @@ def draw_name(game_id):
     strict_slashes=False,
 )
 def update_name(game_id, name_id):
-    hat_pick = HatPick.query.filter_by(id=name_id).one_or_none()
+    hat_pick = (
+        HatPick.query.filter_by(id=name_id)
+        .join(Game)
+        .filter(Game.game_id == game_id)
+        .one_or_none()
+    )
     if hat_pick is None:
-        abort(404, description="Name {name_id} not found")
+        abort(404, description=f"Hat pick {name_id} not found in game {game_id}")
 
     if not request.json:
         abort(400, description="Request had no JSON body")
