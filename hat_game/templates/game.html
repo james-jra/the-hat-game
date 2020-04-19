@@ -17,3 +17,40 @@
       </button>
     </div>
 {% endblock %}
+
+{% block app_scripts %}
+  <script type="text/javascript">
+    class HatPick {
+      constructor(id, name, picked, submitter) {
+        this.id = id;
+        this.name = name;
+        this.picked = picked;
+        this.submitter = submitter;
+      }
+      static from(json){
+        return Object.assign(new HatPick(), json);
+      }
+    }
+
+    async function drawFromHat(game_id) {
+      const response = await fetch("/game/" + game_id + "/hat-picks/draw", {
+        method: 'POST',
+      });
+      return HatPick.from(response.json());
+    }
+
+    // Return this HatPick to the hat
+    async function returnToHat(hat_pick) {
+      hat_pick.picked = false;
+      const response = await fetch("/game/" + game_id + "/hat-picks/" + hat_pick.id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(hat_pick)
+      });
+      return response;
+    }
+
+  </script>
+{% endblock %}

@@ -118,7 +118,7 @@ def join_game(game_id):
     )
 
 
-@app.route("/game/<string:game_id>/hat_picks", strict_slashes=False)
+@app.route("/game/<string:game_id>/hat-picks", strict_slashes=False)
 def get_game_hat_picks(game_id):
     hat_picks = HatPick.query.join(Game).filter(Game.game_id == game_id).all()
 
@@ -126,7 +126,7 @@ def get_game_hat_picks(game_id):
 
 
 @app.route(
-    "/game/<string:game_id>/hat_picks/draw", methods=["POST"], strict_slashes=False
+    "/game/<string:game_id>/hat-picks/draw", methods=["POST"], strict_slashes=False
 )
 def draw_name(game_id):
     hat_picks = (
@@ -146,7 +146,7 @@ def draw_name(game_id):
 
 
 @app.route(
-    "/game/<string:game_id>/hat_pick/<int:name_id>",
+    "/game/<string:game_id>/hat-pick/<int:name_id>",
     methods=["PUT"],
     strict_slashes=False,
 )

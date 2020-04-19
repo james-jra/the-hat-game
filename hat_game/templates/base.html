@@ -95,7 +95,6 @@
 
   // Create a new game, returning the location response header.
   async function createGame() {
-    // Default options are marked with *
     const response = await fetch("{{ url_for('create_game') }}", {
       method: 'POST',
       headers: {
@@ -106,4 +105,5 @@
     return response.headers.get('location');
   }
   </script>
+  {% block app_scripts %}{% endblock %}
 {% endblock %}
