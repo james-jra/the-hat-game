@@ -1,9 +1,15 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+  <div class="row text-center">
     <h1>Welcome to The Hat Game!</h1>
     <div>
-      <p><a href="/new">Create a new game</a></p>
-      <p><a href="/join">Join a game</a></p>
+      <a class="btn btn-secondary btn-lg btn-block" href="/games" role="button">
+        Create a new game
+      </a>
+      <a class="btn btn-secondary btn-lg btn-block" href="/join" role="button">
+        Join a game
+      </a>
     </div>
+  </div>
 {% endblock %}
