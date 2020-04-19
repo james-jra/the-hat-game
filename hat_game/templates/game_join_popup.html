@@ -1,0 +1,27 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2>Join a Game</h2>
+  <br>
+  <label for="game_id">Game ID</label>
+  <br>
+  <input id="game_id" value="">
+  <button id="join_btn" type="button" class="btn btn-primary">Join</button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{super()}}
+  <script type="text/javascript">
+  $(function() {
+    $('#join_btn').click(function()
+    {
+      window.location.replace(
+        "{{ url_for('game_page', game_id='') }}"
+        + document.getElementById("game_id").value
+      )
+    });
+  });
+  </script>
+{% endblock %}
