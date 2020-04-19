@@ -19,7 +19,7 @@ def get_db_uri():
     db_uri_env_var = os.environ.get("DATABASE_URL")
     if db_uri_env_var is None:
         logger.warn("No DATABASE_URL environment variable provided")
-        db_url = 'sqlite:///' + os.path.join(basedir, 'app.db')
+        db_url = "sqlite:///" + os.path.join(basedir, "app.db")
     else:
         db_url = db_uri_env_var
 

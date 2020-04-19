@@ -75,9 +75,9 @@ def game_page(game_id):
     )
 
 
-@app.route('/games/popup', strict_slashes=False)
+@app.route("/games/popup", strict_slashes=False)
 def join_game_popup():
-    return render_template('game_join_popup.html')
+    return render_template("game_join_popup.html")
 
 
 @app.route("/game/<string:game_id>/join", methods=["POST", "GET"], strict_slashes=False)

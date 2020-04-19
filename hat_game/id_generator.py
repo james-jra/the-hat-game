@@ -167,7 +167,7 @@ hats = [
 ]
 
 
-def get_id(separator='-'):
+def get_id(separator="-"):
     r = random.SystemRandom()
-    name = '{}{}{}'.format(r.choice(adjectives), separator, r.choice(hats))
+    name = "{}{}{}".format(r.choice(adjectives), separator, r.choice(hats))
     return name
