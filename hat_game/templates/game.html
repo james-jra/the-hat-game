@@ -8,49 +8,31 @@
       {{ url_root }}{{ url_for('join_game', game_id=game_id) }}
     </a>
     </p>
-    <div>
-      <button type="button" class="btn btn-primary btn-lg btn-block" onclick="getNext()">
-        Next
-      </button>
-      <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="doSkip()">
-        Pass
-      </button>
+    <div class="row">
+      <div id="gameControls" class="btn-group btn-group-lg" role="group">
+        <button type="button"
+            class="btn btn-primary drawButton"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Draw a name">
+          Draw
+        </button>
+        <button type="button"
+            class="btn btn-success completeTurnButton"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Return active names to the Hat">
+          Complete Turn
+        </button>
+        <button type="button"
+            class="btn btn-danger completeRoundButton"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Return all names to the Hat">
+          Complete Round
+        </button>
+      </div>
     </div>
-{% endblock %}
-
-{% block app_scripts %}
-  <script type="text/javascript">
-    class HatPick {
-      constructor(id, name, picked, submitter) {
-        this.id = id;
-        this.name = name;
-        this.picked = picked;
-        this.submitter = submitter;
-      }
-      static from(json){
-        return Object.assign(new HatPick(), json);
-      }
-    }
-
-    async function drawFromHat(game_id) {
-      const response = await fetch("/game/" + game_id + "/hat-picks/draw", {
-        method: 'POST',
-      });
-      return HatPick.from(response.json());
-    }
-
-    // Return this HatPick to the hat
-    async function returnToHat(hat_pick) {
-      hat_pick.picked = false;
-      const response = await fetch("/game/" + game_id + "/hat-picks/" + hat_pick.id, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(hat_pick)
-      });
-      return response;
-    }
-
-  </script>
+    <div id="hatPicksDisplay" class="row">
+    </div>
 {% endblock %}

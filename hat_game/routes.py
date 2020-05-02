@@ -79,7 +79,7 @@ def game_page(game_id):
     )
 
 
-@app.route("/game/<string:game_id>/join", methods=["POST", "GET"], strict_slashes=False)
+@app.route("/join/<string:game_id>", methods=["POST", "GET"], strict_slashes=False)
 def join_game(game_id):
     game = Game.query.filter_by(game_id=game_id).limit(1).first()
     if game is None:
@@ -151,12 +151,8 @@ def draw_name(game_id):
     strict_slashes=False,
 )
 def update_name(game_id, name_id):
-    hat_pick = (
-        HatPick.query.filter_by(id=name_id)
-        .join(Game)
-        .filter(Game.game_id == game_id)
-        .one_or_none()
-    )
+    hat_pick = HatPick.query.get(name_id)
+
     if hat_pick is None:
         abort(404, description=f"Hat pick {name_id} not found in game {game_id}")
 
@@ -173,11 +169,13 @@ def update_name(game_id, name_id):
     if "game_id" in request.json and type(request.json["game_id"]) is not int:
         abort(400, description="game_id invalid")
 
-    hat_pick.name = request.json.get("title", hat_pick.name)
-    hat_pick.submitter = request.json.get("description", hat_pick.submitter)
-    hat_pick.picked = request.json.get("done", hat_pick.picked)
+    hat_pick.name = request.json.get("name", hat_pick.name)
+    hat_pick.picked = request.json.get("picked", hat_pick.picked)
     hat_pick.timestamp = datetime.utcnow()
 
+    if hat_pick.submitter != request.json.get("submitter", hat_pick.submitter):
+        db.session.rollback()
+        abort(403, "submitter field is immutable")
     if hat_pick.id != request.json.get("id", hat_pick.id):
         db.session.rollback()
         abort(403, "id field is immutable")

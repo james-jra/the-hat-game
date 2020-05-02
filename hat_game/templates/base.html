@@ -4,6 +4,11 @@
   {% if title %}Hat Game - {{ title }}{% else %}Welcome to The Hat Game{% endif %}
 {% endblock %}
 
+{% block head %}
+  {{super()}}
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+{% endblock %}
+
 {% block navbar %}
   <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
@@ -71,39 +76,7 @@
 {% block scripts %}
   {{super()}}
   {{ moment.include_moment() }}
-  <script type="text/javascript">
-  $(function() {
-    $('#joinGameButton').click(function() {
-      window.location.replace(
-        "{{ url_for('game_page', game_id='') }}"
-        + document.getElementById("game_id").value
-      )
-    });
-  });
 
-  $(function() {
-    $('.newGameButton').click(function() {
-      createGame().then((data) => {
-        if (data) {
-          window.location.replace(data);
-        } else {
-          console.log("Game create failed");
-        }
-      });
-    });
-  });
-
-  // Create a new game, returning the location response header.
-  async function createGame() {
-    const response = await fetch("{{ url_for('create_game') }}", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({})
-    });
-    return response.headers.get('location');
-  }
-  </script>
-  {% block app_scripts %}{% endblock %}
+  <script type="text/javascript" src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/game.js') }}"></script>
 {% endblock %}
