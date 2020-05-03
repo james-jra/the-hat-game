@@ -1,4 +1,6 @@
 __version__ = "0.1.0"
+from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
 from config import Config
 from flask import Flask
 from flask_bootstrap import Bootstrap
@@ -21,8 +23,8 @@ moment = Moment(app)
 # Link up the other bits of the app
 from hat_game import errors, models, routes  # noqa
 
-# Set-up app logger
 if not app.debug:
+    # Set-up app logger
     if not os.path.exists("logs"):
         os.mkdir("logs")
     file_handler = RotatingFileHandler(
@@ -38,3 +40,11 @@ if not app.debug:
 
     app.logger.setLevel(logging.INFO)
     app.logger.info("Hat game startup")
+
+    # Run a scheduled job to clean the DB
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=routes.db_clean, trigger="interval", hours=1)
+    scheduler.start()
+
+    # Shut down the scheduler when exiting the app
+    atexit.register(lambda: scheduler.shutdown())

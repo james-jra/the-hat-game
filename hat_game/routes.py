@@ -26,6 +26,12 @@ def index():
     return render_template("index.html", title="Home")
 
 
+@app.route("/games", methods=["GET"], strict_slashes=False)
+def list_games():
+    games = Game.query.all()
+    return jsonify([game.as_dict() for game in games])
+
+
 def get_default_names():
     with open("hat_game/names.json", "r") as fd:
         data = json.load(fd)
@@ -118,7 +124,7 @@ def join_game(game_id):
     )
 
 
-@app.route("/game/<string:game_id>/hat-picks", strict_slashes=False)
+@app.route("/game/<string:game_id>/hat-picks", methods=["GET"], strict_slashes=False)
 def get_game_hat_picks(game_id):
     hat_picks = HatPick.query.join(Game).filter(Game.game_id == game_id).all()
 
@@ -187,3 +193,12 @@ def update_name(game_id, name_id):
     db.session.commit()
 
     return jsonify({"hat_pick": hat_pick.as_dict()})
+
+
+@app.route("/clean", methods=["POST"], strict_slashes=False)
+def db_clean():
+    app.logger.info("Cleanup")
+    removed = Game.delete_expired()
+    outcome = "Removed {} games".format(removed)
+    app.logger.info(outcome)
+    return outcome
