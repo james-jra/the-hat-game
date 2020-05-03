@@ -147,40 +147,51 @@ function makeActivePicks(pair) {
   row.appendChild(title);
 
   for (var i = 0; i < pair.length; i++) {
-    // Create the list item:
-    var col = document.createElement('div');
-    col.setAttribute('class', 'col');
+    let item = pair[i];
+    let cardId = item.id;
+    let cardName = item.name;
+
+		// Create the body element to contain name and buttons.
+		var cardBody = document.createElement('div');
+		cardBody.setAttribute('class', 'panel-body');
 
     // Set its contents:
-    col.appendChild(document.createTextNode(pair[i].name));
-    col.appendChild(document.createElement('p'));
+		var cardTitle = document.createElement('h3');
+		cardTitle.innerHTML = item.name;
+    cardBody.appendChild(cardTitle);
+		cardBody.appendChild(document.createElement('br'));
 
     // Button Group to draw/pass/return to hat.
     var btnGroup = document.createElement('div');
     btnGroup.setAttribute('class', 'btn-group btn-group-lg');
     btnGroup.setAttribute('role', 'group');
-    const cardId = pair[i].id;
-    const cardName = pair[i].name;
 
     var bankBtn = document.createElement('BUTTON');
-    bankBtn.setAttribute('class', 'btn btn-primary btn-lg bankButton');
+    bankBtn.setAttribute('class', 'btn btn-primary');
     bankBtn.addEventListener("click", function(event){clickBank(cardId, cardName)});
     bankBtn.innerHTML = 'Got it!';
     var passBtn = document.createElement('BUTTON');
-    passBtn.setAttribute('class', 'btn btn-secondary btn-lg passButton');
+    passBtn.setAttribute('class', 'btn btn-primary');
     passBtn.addEventListener("click", function(event){clickPass(cardId, cardName)});
     passBtn.innerHTML = 'Pass';
     var returnBtn = document.createElement('BUTTON');
-    returnBtn.setAttribute('class', 'btn btn-dark btn-lg returnButton');
+    returnBtn.setAttribute('class', 'btn btn-primary');
     returnBtn.addEventListener("click", function(event){clickReturn(cardId, cardName)});
     returnBtn.innerHTML = 'Return';
 
     btnGroup.appendChild(bankBtn);
     btnGroup.appendChild(passBtn);
     btnGroup.appendChild(returnBtn);
-    col.appendChild(btnGroup);
+    cardBody.appendChild(btnGroup);
 
-    // Add it to the list:
+    // wrap it in a card/column and add it to the row.
+    var card = document.createElement('div');
+		card.setAttribute('class', 'panel panel-default text-center mb-3');
+		// card.setAttribute('style', 'max-width: 18rem;');
+		card.appendChild(cardBody);
+    var col = document.createElement('div');
+		col.setAttribute('class', 'col-xs-6 col-md-4');
+		col.appendChild(card);
     row.appendChild(col);
   }
 
@@ -189,35 +200,34 @@ function makeActivePicks(pair) {
 }
 
 function makeSuccessfulPicks(array) {
-  console.log("Make successful picks", array);
+  console.log("Make successful picks");
+  console.debug(array);
   // Create the list element:
   var list = document.createElement('ul');
+  list.setAttribute('class', 'list-group');
   if (!array) {
-    console.log("Invalid array");
+    console.warn("Invalid array");
     return row;
   }
 
   for (var i = 0; i < array.length; i++) {
-    // Create the list item:
-    var item = document.createElement('li');
-    const cardId = array[i].id;
-    const cardName = array[i].name;
+    let item = array[i];
+    let cardId = item.id;
+    let cardName = item.name;
 
-    // Set its contents:
-    item.appendChild(document.createTextNode(array[i].name));
-    // Button to return to hat.
-    var btn = document.createElement('BUTTON');
-    btn.setAttribute('class', 'btn btn-secondary returnButton');
-    btn.addEventListener("click", function(event){clickReturn(cardId, cardName)});
-    btn.innerHTML = 'Return';
-    item.appendChild(btn);
+    // Create the list item.
+    var listElem = document.createElement('BUTTON');
+    listElem.setAttribute('class', 'list-group-item list-group-item-action');
+    // Set its contents and click action.
+    listElem.innerHTML = item.name;
+    listElem.addEventListener("click", function(event){clickReturn(cardId, cardName)});
 
     // Add it to the list:
-    list.appendChild(item);
+    list.appendChild(listElem);
   }
   // Add a title for the active picks.
   var title = document.createElement('h3');
-  title.innerHTML = 'Successful picks';
+  title.innerHTML = 'Successful picks <small> click to return to the hat </small>';
 
   // Shove it in a row div.
   var row = document.createElement('div');
@@ -231,8 +241,12 @@ function makeSuccessfulPicks(array) {
 
 function redrawHatPicks(livePair, successfulPicks) {
   console.log("Redraw hat picks");
-  console.log(livePair);
-  console.log(successfulPicks);
+  console.debug(livePair);
+  console.debug(successfulPicks);
+
+  // Write back to local storage.
+  saveMapItem(gameId, "successfulPicks", successfulPicks);
+  saveMapItem(gameId, "livePair", livePair);
 
   $('#hatPicksDisplay').empty()
   $('#hatPicksDisplay').append(
@@ -251,8 +265,31 @@ function getGameId() {
   }
 }
 
-var livePair = new Map();
-var successfulPicks = new Map();
+function loadMapItem(gameId, itemName) {
+  const itemRef = gameId + "/" + itemName;
+  console.debug(`Loading ${itemRef}`);
+  const loadedString = localStorage.getItem(itemRef);
+  console.debug("Loaded", loadedString);
+  if (loadedString != null) {
+    try {
+      return new Map(JSON.parse(loadedString));
+    }
+    catch (err) {
+      console.warn(err);
+      return new Map();
+    }
+  } else {
+    return new Map();
+  }
+}
+
+function saveMapItem(gameId, itemName, item) {
+  // Serialize as array of k/v pairs.
+  localStorage.setItem(gameId + "/" + itemName, JSON.stringify([...item]));
+}
+
+var livePair;
+var successfulPicks;
 var gameId = "";
 
 $(function() {
@@ -261,18 +298,22 @@ $(function() {
     throw new Error('Could not load GameId');
   }
 
+  livePair = loadMapItem(gameId, 'livePair');
+  successfulPicks = loadMapItem(gameId, 'successfulPicks');
+
   // Handle draw - button present outside of the hat picks elements.
   $('.drawButton').click(function() {
     console.log("Draw card");
     if (livePair.size < 2) {
       drawFromHatRequest(gameId).then(([not_empty, data]) => {
-        console.log(`Hat returned value ${not_empty} ${data}`);
+        console.log("Hat returned OK");
+        console.debug(`Hat returned value ${not_empty} ${data}`);
         if (not_empty && data) {
           livePair.set(data.id, data);
         } else if (!not_empty) {
           alert("The hat's empty!");
         } else {
-          console.log("Failed to draw");
+          console.warn("Failed to draw");
         }
       }).then(() => {
         redrawHatPicks(livePair, successfulPicks);
@@ -285,34 +326,49 @@ $(function() {
   // Handle end-of-turn - button present outside of the hat picks elements.
   $('.completeTurnButton').click(function() {
     console.log("Complete turn");
+    let promises = [];
+
     for (let [id, pick] of livePair) {
       console.log(`Return ${pick.id} ${pick.name}`);
-      returnToHatRequest(gameId, pick).then(() => {
+      let p = returnToHatRequest(gameId, pick).then(() => {
         console.log("Return succeeded");
+        livePair.delete(id);
+      }).catch((err) => {
+        console.error(err);
       });
-      livePair.delete(id);
+      promises.push(p);
     }
-
-    redrawHatPicks(livePair, successfulPicks);
+    Promise.all(promises).then(() => {
+      redrawHatPicks(livePair, successfulPicks);
+    });
   });
 
   $('.completeRoundButton').click(function() {
     console.log("Complete round");
+    let promises = [];
     for (let [id, pick] of livePair) {
       console.log(`Return ${pick.id} ${pick.name}`);
-      returnToHatRequest(gameId, pick).then(() => {
+      let p = returnToHatRequest(gameId, pick).then(() => {
         console.log("Return succeeded");
+        livePair.delete(id);
+      }).catch((err) => {
+        console.error(err);
       });
-      livePair.delete(id);
+      promises.push(p);
     }
     for (let [id, pick] of successfulPicks) {
       console.log(`Return ${pick.id} ${pick.name}`);
-      returnToHatRequest(gameId, pick).then(() => {
+      let p = returnToHatRequest(gameId, pick).then(() => {
         console.log("Return succeeded");
+        successfulPicks.delete(id);
+      }).catch((err) => {
+        console.error(err);
       });
-      successfulPicks.delete(id);
+      promises.push(p);
     }
-    redrawHatPicks(livePair, successfulPicks);
+    Promise.all(promises).then(() => {
+      redrawHatPicks(livePair, successfulPicks);
+    });
   });
 
   redrawHatPicks(livePair, successfulPicks);

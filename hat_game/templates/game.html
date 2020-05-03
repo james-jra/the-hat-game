@@ -1,38 +1,40 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h2>Play</h2>
+    <div class="page-header"><h1>Play</h1></div>
     <p>
     Invite players with the following link:
     <a href="{{ url_for('join_game', game_id=game_id) }}">
       {{ url_root }}{{ url_for('join_game', game_id=game_id) }}
     </a>
     </p>
-    <div class="row">
-      <div id="gameControls" class="btn-group btn-group-lg" role="group">
-        <button type="button"
-            class="btn btn-primary drawButton"
-            data-toggle="tooltip"
-            data-placement="bottom"
-            title="Draw a name">
-          Draw
-        </button>
-        <button type="button"
-            class="btn btn-success completeTurnButton"
-            data-toggle="tooltip"
-            data-placement="bottom"
-            title="Return active names to the Hat">
-          Complete Turn
-        </button>
-        <button type="button"
-            class="btn btn-danger completeRoundButton"
-            data-toggle="tooltip"
-            data-placement="bottom"
-            title="Return all names to the Hat">
-          Complete Round
-        </button>
+    <div class="container">
+      <div class="row">
+        <div id="gameControls" class="btn-group btn-group-lg" role="group">
+          <button type="button"
+              class="btn btn-primary drawButton"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Draw a name">
+            Draw
+          </button>
+          <button type="button"
+              class="btn btn-primary completeTurnButton"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Return active names to the Hat">
+            Complete Turn
+          </button>
+          <button type="button"
+              class="btn btn-primary completeRoundButton"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Return all names to the Hat">
+            Complete Round
+          </button>
+        </div>
       </div>
     </div>
-    <div id="hatPicksDisplay" class="row">
+    <div id="hatPicksDisplay" class="container">
     </div>
 {% endblock %}
