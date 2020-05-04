@@ -56,15 +56,17 @@ function clickBank(cardId, cardName) {
       livePair.delete(cardId);
       drawFromHatRequest(gameId).then(([not_empty, data]) => {
         console.log(`Hat returned value ${not_empty} ${data}`);
-        if (not_empty && data) {
+        if (data) {
           livePair.set(data.id, data);
-        } else if (!not_empty && livePair.size == 0) {
-          alert("The hat's empty!");
         } else {
           console.log("Failed to draw");
         }
-      }).then(() => {
+        return (!not_empty && livePair.size == 0);
+      }).then((game_over) => {
         redrawHatPicks(livePair, successfulPicks);
+        if (game_over) {
+          alert("The hat's empty!");
+        }
       }).catch(() => {
         redrawHatPicks(livePair, successfulPicks);
       });

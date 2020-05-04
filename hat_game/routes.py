@@ -47,7 +47,7 @@ def create_game():
     else:
         hat_picks = []
 
-    for try_n in range(0, 10):
+    for try_n in range(0, 20):
         try:
             game_id = id_generator.get_id()
             game = Game(game_id=game_id)
@@ -60,6 +60,7 @@ def create_game():
             db.session.rollback()
 
     if game_id is None:
+        app.logger.error("Failed to generate game ID")
         abort(500, description="Game creation failed")
 
     game_url = url_for("game_page", game_id=game_id)
