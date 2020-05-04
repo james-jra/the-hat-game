@@ -4,6 +4,7 @@
 *.pyo
 env/
 env*
+!env.py
 dist/
 build/
 *.egg
