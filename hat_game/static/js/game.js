@@ -371,5 +371,7 @@ $(function() {
     });
   });
 
-  redrawHatPicks(livePair, successfulPicks);
+  if (document.getElementById("hatPicksDisplay")) {
+    redrawHatPicks(livePair, successfulPicks);
+  }
 });

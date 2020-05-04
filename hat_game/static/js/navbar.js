@@ -19,7 +19,7 @@ $(function() {
   $('#joinGameButton').click(function() {
     window.location.replace(
       "/game/"
-      + document.getElementById("gameIdInput").value
+      + document.getElementById("gameIdInput").value.toLowerCase()
     )
   });
 
@@ -32,7 +32,7 @@ $(function() {
       // Trigger the button element with a click
       document.getElementById("joinGameButton").click();
     }
-  }); 
+  });
 });
 
 // Hit the Join Game button on enter
