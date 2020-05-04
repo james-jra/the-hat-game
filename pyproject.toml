@@ -14,6 +14,7 @@ flask-migrate = "^2.5.3"
 python-dotenv = "^0.13.0"
 flask-moment = "^0.9.0"
 apscheduler = "^3.6.3"
+gunicorn = "^20.0.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

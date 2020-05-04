@@ -32,3 +32,4 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = get_db_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PERMANENT_SESSION_LIFETIME = timedelta(days=31)
+    LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
