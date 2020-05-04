@@ -165,7 +165,7 @@ function makeActivePicks(pair) {
 
     // Button Group to draw/pass/return to hat.
     var btnGroup = document.createElement('div');
-    btnGroup.setAttribute('class', 'btn-group btn-group-lg');
+    btnGroup.setAttribute('class', 'btn-group btn-group-lg btn-group-responsive');
     btnGroup.setAttribute('role', 'group');
 
     var bankBtn = document.createElement('BUTTON');
