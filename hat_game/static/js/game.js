@@ -143,11 +143,6 @@ function makeActivePicks(pair) {
     return row;
   }
 
-  // Add a title for the active picks.
-  var title = document.createElement('h3');
-  title.innerHTML = 'Active picks';
-  row.appendChild(title);
-
   for (var i = 0; i < pair.length; i++) {
     let item = pair[i];
     let cardId = item.id;
@@ -163,7 +158,7 @@ function makeActivePicks(pair) {
     cardBody.appendChild(cardTitle);
 		cardBody.appendChild(document.createElement('br'));
 
-    // Button Group to draw/pass/return to hat.
+    // Button Groups to draw/pass/return to hat.
     var btnGroup = document.createElement('div');
     btnGroup.setAttribute('class', 'btn-group btn-group-lg btn-group-responsive');
     btnGroup.setAttribute('role', 'group');
@@ -177,7 +172,7 @@ function makeActivePicks(pair) {
     passBtn.addEventListener("click", function(event){clickPass(cardId, cardName)});
     passBtn.innerHTML = 'Pass';
     var returnBtn = document.createElement('BUTTON');
-    returnBtn.setAttribute('class', 'btn btn-primary');
+    returnBtn.setAttribute('class', 'btn btn-dark');
     returnBtn.addEventListener("click", function(event){clickReturn(cardId, cardName)});
     returnBtn.innerHTML = 'Return';
 
@@ -209,7 +204,9 @@ function makeSuccessfulPicks(array) {
   list.setAttribute('class', 'list-group');
   if (!array) {
     console.warn("Invalid array");
-    return row;
+    var col = document.createElement('div');
+    col.setAttribute('class', 'col');
+    return col;
   }
 
   for (var i = 0; i < array.length; i++) {
@@ -222,23 +219,22 @@ function makeSuccessfulPicks(array) {
     listElem.setAttribute('class', 'list-group-item list-group-item-action');
     // Set its contents and click action.
     listElem.innerHTML = item.name;
-    listElem.addEventListener("click", function(event){clickReturn(cardId, cardName)});
 
     // Add it to the list:
     list.appendChild(listElem);
   }
-  // Add a title for the active picks.
-  var title = document.createElement('h3');
-  title.innerHTML = 'Successful picks <small> click to return to the hat </small>';
+  // Add a summary for the active picks.
+  var summary = document.createElement('h4');
+  summary.innerHTML = `Count: ${array.length}`;
 
-  // Shove it in a row div.
-  var row = document.createElement('div');
-  row.setAttribute('class', 'row');
-  row.appendChild(title);
-  row.appendChild(list);
+  // Shove it in a col div.
+  var col = document.createElement('div');
+  col.setAttribute('class', 'col');
+  col.appendChild(summary);
+  col.appendChild(list);
 
   // Finally, return the constructed list:
-  return row;
+  return col;
 }
 
 function redrawHatPicks(livePair, successfulPicks) {
@@ -250,9 +246,12 @@ function redrawHatPicks(livePair, successfulPicks) {
   saveMapItem(gameId, "successfulPicks", successfulPicks);
   saveMapItem(gameId, "livePair", livePair);
 
-  $('#hatPicksDisplay').empty()
-  $('#hatPicksDisplay').append(
+  $('#activePicksDisplay').empty()
+  $('#activePicksDisplay').append(
     makeActivePicks(Array.from(livePair.values())),
+  );
+  $('#successfulPicksDisplay').empty()
+  $('#successfulPicksDisplay').append(
     makeSuccessfulPicks(Array.from(successfulPicks.values()))
   );
 }
