@@ -5,6 +5,7 @@ from hat_game import db
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     game_id = db.Column(db.String(256), index=True, unique=True)
+    n_picks = db.Column(db.Integer, default=4)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     hat_picks = db.relationship("HatPick", backref="game", lazy=True)
 
@@ -27,6 +28,7 @@ class Game(db.Model):
         return {
             "id": self.id,
             "game_id": self.game_id,
+            "n_picks": self.n_picks,
             "created": self.created,
         }
 

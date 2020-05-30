@@ -3,13 +3,13 @@ if (typeof jQuery === 'undefined') {
 }
 
 // Create a new game, returning the location response header.
-async function createGame() {
+async function createGame(nPicks) {
   const response = await fetch("/games", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({})
+    body: JSON.stringify({'n_picks': nPicks})
   });
   return response.headers.get('location');
 }
@@ -39,8 +39,9 @@ $(function() {
 
 // Create a new game and redirect to it if successful.
 $(function() {
-  $('.newGameButton').click(function() {
-    createGame().then((data) => {
+  $('#newGameButton').click(function() {
+    var nPicks = document.getElementById("nPicksInput").value
+    createGame(nPicks).then((data) => {
       if (data) {
         window.location.replace(data);
       } else {

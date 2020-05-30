@@ -14,9 +14,10 @@
         {{ form.csrf_token() }}
         {{ wtf.form_field(form.username, class='form-control') }}
         <h3>Names for the Hat</h3>
-        {% for name in form.names %}
-        <p>{{ wtf.form_field(name, class='form-control') }}</p>
-        {% endfor %}
+        <p>{{ wtf.form_field(form.names_0, class='form-control') }}</p>
+        <p>{{ wtf.form_field(form.names_1, class='form-control') }}</p>
+        <p>{{ wtf.form_field(form.names_2, class='form-control') }}</p>
+        <p>{{ wtf.form_field(form.names_3, class='form-control') }}</p>
         <p><input type=submit class='btn btn-primary btn-block', value='submit'></p>
       </div>
     </form>
